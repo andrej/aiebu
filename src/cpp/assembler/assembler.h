@@ -36,7 +36,7 @@ public:
     aie4_config
   };
 
-  explicit assembler(const elf_type type);
+  explicit assembler(const elf_type type, bool skip_save_restore = false);
 
   std::vector<char> process(const std::vector<char>& buffer1,
                             const std::vector<std::string>& libs = {},

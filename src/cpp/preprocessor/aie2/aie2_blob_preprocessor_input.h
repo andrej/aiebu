@@ -69,6 +69,7 @@ protected:
   std::vector<std::string> pdi_id_list;
   bool haspreempt = false;
   std::shared_ptr<partition_info> m_partition;
+  bool m_skip_save_restore = false;
   virtual uint32_t extractSymbolFromBuffer(std::vector<char>& mc_code, const std::string& section_name, const std::string& argname) = 0;
   void aiecompiler_json_parser(const boost::property_tree::ptree& pt);
   void dmacompiler_json_parser(const boost::property_tree::ptree& pt);
@@ -87,7 +88,7 @@ protected:
 
   void set_numcolumn(uint32_t col) { m_partition->set_numcolumn(col); }
 public:
-  aie2_blob_preprocessor_input()
+  aie2_blob_preprocessor_input(bool skip_save_restore = false) : m_skip_save_restore(skip_save_restore) 
   {
     m_partition = std::make_shared<partition_info>(DEFAULT_COLUMN, 0);
   }
@@ -209,6 +210,8 @@ protected:
     }
   }
 public:
+  aie2_blob_transaction_preprocessor_input(bool skip_save_restore = false) : aie2_blob_preprocessor_input(skip_save_restore) {}
+
   virtual void set_args(const std::vector<char>& mc_code,
                         const std::vector<char>& patch_json,
                         const std::vector<char>& control_packet,

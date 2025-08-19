@@ -22,7 +22,7 @@
 namespace aiebu {
 
 assembler::
-assembler(const elf_type type)
+assembler(const elf_type type, bool skip_save_restore)
 {
 
   if (type == elf_type::aie2_dpu_blob)  {
@@ -35,7 +35,7 @@ assembler(const elf_type type)
     m_preprocessor = std::make_unique<aie2_blob_preprocessor>();
     m_enoder = std::make_unique<aie2_blob_encoder>();
     m_elfwriter = std::make_unique<aie2_blob_elf_writer>();
-    m_ppi = std::make_shared<aie2_blob_transaction_preprocessor_input>();
+    m_ppi = std::make_shared<aie2_blob_transaction_preprocessor_input>(skip_save_restore);
   }
   else if (type == elf_type::aie2_asm)  {
     m_preprocessor = std::make_unique<aie2_asm_preprocessor>();

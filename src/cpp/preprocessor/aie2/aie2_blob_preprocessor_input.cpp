@@ -18,7 +18,13 @@ void
 aie2_blob_preprocessor_input::
 add_preemption_code(uint32_t col)
 {
-  auto& stx_save_restore_map = get_stx_save_restore();
+  std::vector<uint8_t> empty_insts_bin = {0x00, 0x01, 0x04, 0x06, 0x08, 0x01, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x14, 0x00, 0x00, 0x00, 0x05, 0x00, 0x00, 0x00};
+  std::map<uint32_t, std::pair<std::vector<uint8_t>, std::vector<uint8_t>>> empty_save_restore_map =
+    {{1, {empty_insts_bin, empty_insts_bin}}, {2, {empty_insts_bin, empty_insts_bin}}, {4, {empty_insts_bin, empty_insts_bin}}, {8, {empty_insts_bin, empty_insts_bin}}};
+
+  std::map<uint32_t, std::pair<std::vector<uint8_t>, std::vector<uint8_t>>> &stx_save_restore_map =
+    !m_skip_save_restore ? get_stx_save_restore() : empty_save_restore_map;
+
   if (stx_save_restore_map.count(col) == 0)
   {
     auto error_msg = boost::format("Preemption save/restore code for not available for txn buffer with col:(%d)\n") % col;

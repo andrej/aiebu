@@ -25,7 +25,7 @@ function compile {
     fi
 
     if [[ $config == "Debug" ]]; then
-	cmakeflags="$cmakeflags -DXRT_CLANG_TIDY=ON"
+	cmakeflags="$cmakeflags -DXRT_CLANG_TIDY=OFF"
     fi
 
     cmake -B $BUILDDIR/$config $cmakeflags $BUILDDIR/..

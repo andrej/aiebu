@@ -97,7 +97,9 @@ class target_aie2blob_transaction: public target_aie2blob
   target_aie2blob_transaction(const std::string& exename, const std::string& name = "aie2txn",
                               const std::string& description = "aie2 txn blob assembler")
     : target_aie2blob(exename, name, description) {}
+  bool m_skip_save_restore = false;
   void assemble(const sub_cmd_options &_options) override;
+  bool parseOption(const sub_cmd_options &_options);
 };
 
 class target_aie2: public target_aie2blob_transaction

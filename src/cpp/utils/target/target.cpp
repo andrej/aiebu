@@ -54,7 +54,9 @@ target_aie2blob::parseOption(const sub_cmd_options &options)
   cxxopts::Options all_options("Target aie2blob Options", m_description);
 
   try {
-    all_options.add_options()
+    all_options
+      .allow_unrecognised_options()
+      .add_options()
             ("o,outputelf", "ELF output file name", cxxopts::value<decltype(m_output_elffile)>())
             ("c,controlcode", "TXN control code binary or ASM file", cxxopts::value<decltype(m_transaction_file)>())
             ("p,controlpkt", "Control packet binary", cxxopts::value<decltype(m_controlpkt_file)>())
@@ -122,6 +124,40 @@ target_aie2blob::parseOption(const sub_cmd_options &options)
   return true;
 }
 
+bool
+aiebu::utilities::
+target_aie2blob_transaction::parseOption(const sub_cmd_options &options)
+{
+  if (!target_aie2blob::parseOption(options)) {
+    return false;
+  }
+
+  std::vector<std::string> pm_key_value_pairs;
+  cxxopts::Options all_options("Target aie2txn Options", m_description);
+
+  try {
+    all_options
+      .allow_unrecognised_options()
+      .add_options()
+            ("s,skip-save-restore", "Skip generating save/restore code for PREEMPT instructions", cxxopts::value<bool>()->default_value("false"))
+    ;
+
+    auto char_ver = aiebu::utilities::vector_of_string_to_vector_of_char(options);
+    auto result = all_options.parse(char_ver.size(), char_ver.data());
+
+    if (result.count("skip-save-restore"))
+      m_skip_save_restore = result["skip-save-restore"].as<decltype(m_skip_save_restore)>();
+
+  }
+  catch (const cxxopts::exceptions::exception& e) {
+    std::cout << all_options.help({"", "Target aie2txn Options"});
+    auto errMsg = boost::format("Error parsing options: %s\n") % e.what() ;
+    throw std::runtime_error(errMsg.str());
+  }
+
+  return true;
+}
+
 void
 aiebu::utilities::
 target_aie2blob_dpu::assemble(const sub_cmd_options &options)
@@ -152,7 +188,7 @@ target_aie2blob_transaction::assemble(const sub_cmd_options &options)
   try {
     aiebu::aiebu_assembler as(aiebu::aiebu_assembler::buffer_type::blob_instr_transaction,
                               m_transaction_buffer, m_control_packet_buffer, m_patch_data_buffer,
-                              m_libs, m_libpaths, m_ctrlpkt);
+                              m_libs, m_libpaths, m_ctrlpkt, m_skip_save_restore);
     write_elf(as, m_output_elffile);
     if (!m_print_report)
       return;

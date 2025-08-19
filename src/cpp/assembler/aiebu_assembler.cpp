@@ -34,7 +34,8 @@ aiebu_assembler(buffer_type type,
                 const std::vector<char>& patch_json,
                 const std::vector<std::string>& libs,
                 const std::vector<std::string>& libpaths,
-                const std::map<uint32_t, std::vector<char> >& ctrlpkt) : m_type(type)
+                const std::map<uint32_t, std::vector<char> >& ctrlpkt,
+                const bool skip_save_restore) : m_type(type)
 {
   if (type == buffer_type::blob_instr_dpu)
   {
@@ -44,7 +45,7 @@ aiebu_assembler(buffer_type type,
   }
   else if (type == buffer_type::blob_instr_transaction)
   {
-    aiebu::assembler a(assembler::elf_type::aie2_transaction_blob);
+    aiebu::assembler a(assembler::elf_type::aie2_transaction_blob, skip_save_restore);
     elf_data = a.process(buffer1, libs, libpaths, patch_json, buffer2, ctrlpkt);
     m_output_type = aiebu::aiebu_assembler::buffer_type::elf_aie2;
   }

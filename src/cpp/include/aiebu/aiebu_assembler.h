@@ -74,7 +74,8 @@ class aiebu_assembler
                const std::vector<char>& patch_json,
                const std::vector<std::string>& libs = {},
                const std::vector<std::string>& libpaths = {},
-               const std::map<uint32_t, std::vector<char> >& pm_ctrlpkt = {});
+               const std::map<uint32_t, std::vector<char> >& pm_ctrlpkt = {},
+               bool skip_save_restore = false);
 
     /*
      * Constructor takes buffer type, buffer,
